@@ -28,7 +28,7 @@ function Extension() {
     // Consider rendering a fallback UI or nothing at all, if the feature is unavailable
     return (
       <Banner title="pick-up-discount" status="warning">
-        {translate("attributeChangesAreNotSupported")}
+        Use this extension to pickup to apply discount
       </Banner>
     );
   }
@@ -37,9 +37,7 @@ function Extension() {
   return (
     <BlockStack border={"dotted"} padding={"tight"}>
       <Banner title="pick-up-discount">
-        {translate("welcome", {
-          target: <Text emphasis="italic">{extension.target}</Text>,
-        })}
+        <Text emphasis="italic">Lien‘s Shop</Text>
       </Banner>
       <Checkbox onChange={onCheckboxChange}>
         {translate("iWouldLikeAFreeGiftWithMyOrder")}

@@ -19,6 +19,10 @@ type = "ui_extension"
 module = "./src/Checkout.jsx"
 target = "purchase.checkout.block.render"
 
+[[extensions.targeting]]
+module = "./src/Pickup.jsx"
+target = "purchase.checkout.pickup-location-option-item.render-after"
+
 [extensions.capabilities]
 # Gives your extension access to directly query Shopify’s storefront API.
 # https://shopify.dev/docs/api/checkout-ui-extensions/unstable/configuration#api-access
