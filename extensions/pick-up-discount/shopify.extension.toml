@@ -14,10 +14,7 @@ type = "ui_extension"
 # Controls where in Shopify your extension will be injected,
 # and the file that contains your extension’s source code. Learn more:
 # https://shopify.dev/docs/api/checkout-ui-extensions/unstable/extension-targets-overview
-
-[[extensions.targeting]]
-module = "./src/Checkout.jsx"
-target = "purchase.checkout.block.render"
+ 
 
 [[extensions.targeting]]
 module = "./src/Pickup.jsx"
