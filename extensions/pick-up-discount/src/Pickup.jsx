@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   reactExtension,
   Text,
@@ -41,7 +42,10 @@ function Extension() {
 
   console.log("instructions of delivery", {isTargetSelected, pickupLocationOptionTarget} );
 
-  isTargetSelected && type === 'pickup' ? applyPickupDiscount() : removePickupDiscount();
+  useEffect(() => {
+    console.log("isTargetSelected, type", {isTargetSelected, type});
+    isTargetSelected && type === 'pickup' ? applyPickupDiscount() : removePickupDiscount();
+  }, [isTargetSelected, type]);
 
   if (isTargetSelected) {
     return <Text>Choose a pickup location: {title}</Text>;
