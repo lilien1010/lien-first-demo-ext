@@ -1,0 +1,72 @@
+query RunInput {
+  cart {
+    id
+    cost {
+      totalAmount {
+        amount
+        currencyCode
+      }
+    }
+    buyerIdentity {
+      customer {
+        id
+        email
+        # Get customer metafields for billing address
+        metafields(
+          first: 10
+          namespace: "billing_preferences"
+        ) {
+          edges {
+            node {
+              id
+              namespace
+              key
+              value
+              type
+            }
+          }
+        }
+        # Get default addresses
+        defaultAddress {
+          id
+          firstName
+          lastName
+          address1
+          address2
+          city
+          province
+          country
+          zip
+          phone
+        }
+        addresses(first: 10) {
+          edges {
+            node {
+              id
+              firstName
+              lastName
+              address1
+              address2
+              city
+              province
+              country
+              zip
+              phone
+            }
+          }
+        }
+      }
+    }
+  }
+  deliveryAddress {
+    firstName
+    lastName
+    address1
+    address2
+    city
+    province
+    country
+    zip
+    phone
+  }
+}
