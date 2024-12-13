@@ -1,23 +1,101 @@
 // @ts-check
+// src/index.js
 
 /**
- * @typedef {import("../generated/api").RunInput} RunInput
- * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
- */
-
-/**
- * @param {RunInput} input
- * @returns {FunctionRunResult}
+ * Runs the billing address function
+ * @param {Object} input - GraphQL query response
+ * @returns {Object} - Function result with operations
  */
 export function run(input) {
-  const errors = input.cart.lines
-    .filter(({ quantity }) => quantity > 1)
-    .map(() => ({
-      localizedMessage: "Not possible to order more than one of each",
-      target: "$.cart",
-    }));
-
-  return {
-    errors
+  const { cart } = input;
+  console.log('cart', cart);
+  // Get customer from cart
+  const customer = cart?.buyerIdentity?.customer;
+  if (!customer) {
+    console.log('No customer found');
+    return { operations: [] };
   }
-};
+
+  try {
+    // Get billing address from metafields
+    const lastBillingAddress = getLastBillingAddressFromMetafields(customer);
+    
+    if (!lastBillingAddress) {
+      console.log('No saved billing address found');
+      return { operations: [] };
+    }
+
+    // Return the fill operation
+    return {
+      operations: [{
+        fill: {
+          address: {
+            type: "BILLING",
+            address: lastBillingAddress
+          }
+        }
+      }]
+    };
+
+  } catch (error) {
+    console.error('Error in billing address function:', error);
+    return { operations: [] };
+  }
+}
+
+/**
+ * Extract billing address from customer metafields
+ * @param {Object} customer - Customer object from GraphQL
+ * @returns {Object|null} - Billing address or null
+ */
+function getLastBillingAddressFromMetafields(customer) {
+  console.log('customer', customer);  
+  try {
+    // Find billing address metafield
+    const billingMetafield = customer.metafields.edges.find(
+      ({ node }) => 
+        node.namespace === "billing_preferences" && 
+        node.key === "last_billing_address"
+    )?.node;
+
+    if (!billingMetafield) {
+      return null;
+    }
+
+    // Parse the stored address
+    const storedAddress = JSON.parse(billingMetafield.value);
+    
+    // Validate required fields
+    if (!isValidAddress(storedAddress)) {
+      console.error('Invalid stored address format');
+      return null;
+    }
+
+    return storedAddress;
+  } catch (error) {
+    console.error('Error parsing stored billing address:', error);
+    return null;
+  }
+}
+
+/**
+ * Validate address object
+ * @param {Object} address - Address to validate
+ * @returns {boolean} - Whether address is valid
+ */
+function isValidAddress(address) {
+  const requiredFields = [
+    'firstName',
+    'lastName',
+    'address1',
+    'address2',
+    'city',
+    'country',
+    'zip'
+  ];
+
+  return requiredFields.every(field => {
+    const value = address[field];
+    return value && typeof value === 'string' && value.trim() !== '';
+  });
+}
