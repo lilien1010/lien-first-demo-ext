@@ -18,12 +18,12 @@ export function run(input) {
 
   try {
     // Get billing address from metafields
-    const lastBillingAddress = getLastBillingAddressFromMetafields(customer);
+    // const lastBillingAddress = getLastBillingAddressFromMetafields(customer);
     
-    if (!lastBillingAddress) {
-      console.log('No saved billing address found');
-      return { operations: [] };
-    }
+    // if (!lastBillingAddress) {
+    //   console.log('No saved billing address found');
+    //   return { operations: [] };
+    // }
 
     // Return the fill operation
     return {
@@ -31,7 +31,15 @@ export function run(input) {
         fill: {
           address: {
             type: "BILLING",
-            address: lastBillingAddress
+            address: {
+              firstName: 'liam',
+              lastName: 'smith',
+              address1: '123 main st',
+              address2: 'apt 1',
+              city: 'Singapore',
+              country: 'Singapore',
+              zip: '533867'
+            }
           }
         }
       }]
@@ -50,15 +58,9 @@ export function run(input) {
  */
 function getLastBillingAddressFromMetafields(customer) {
   console.log('customer', customer);  
-  try {
-    // Find billing address metafield
-    const billingMetafield = customer.metafields.edges.find(
-      ({ node }) => 
-        node.namespace === "billing_preferences" && 
-        node.key === "last_billing_address"
-    )?.node;
+  try { 
 
-    if (!billingMetafield) {
+    if (!customer.metafield) {
       return null;
     }
 
